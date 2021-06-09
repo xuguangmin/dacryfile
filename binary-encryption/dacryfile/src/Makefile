@@ -15,7 +15,7 @@ all: $(OBJ)
 	@cp $(OBJ) $(TOP)/obj
 
 .c.o: $(SRC)
-	$(CC) $(CFLAGS) $(INCLUDE) -c -o $@ $<
+	$(CC) $(CFLAGS) -g  $(INCLUDE) -c -o $@ $<
 
 clean:
 	/bin/rm -f *.o *~ 

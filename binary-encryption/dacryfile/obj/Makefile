@@ -14,5 +14,5 @@ clean:
 
 test:
 	cp host.orig host
-	../bin/encrypt
-	../bin/inject
+	../bin/encrypt host
+	../bin/inject -f host -p para.o

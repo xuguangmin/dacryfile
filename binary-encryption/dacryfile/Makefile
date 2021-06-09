@@ -2,7 +2,9 @@
 #
 
 all:  
-	@mkdir bin
+	@if ! test -f "bin" ; then \
+		mkdir bin; \
+	fi 
 	@echo "Makeing required objects..."
 	@cd linux && make all
 
@@ -20,4 +22,4 @@ clean:
 	@cd util && make clean
 	@cd src && make clean
 	@cd obj && make clean
-	/bin/rm -f *~
+	/bin/rm -rf  bin demo/host*

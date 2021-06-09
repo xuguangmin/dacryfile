@@ -74,7 +74,6 @@ main (int argc, char **argv)
 		file = argv[1];
 	else
 		usage(argv[0]);
-
 	do {
 		if (i)
 			printf("Passphrases don't match.\n");
@@ -84,11 +83,12 @@ main (int argc, char **argv)
 
 		memcpy(pass, passw, strlen(passw));
 
+		#if 0
 		if ((passw = getpass("Confirm phrase: ")) == NULL)
 			fatal("Bad pass");
 		i = 1;
-
-	} while (STRCMP(passw, !=, pass));
+		#endif
+	} while (0);
 
 	memset(pass, 0x00, sizeof(pass));
 
@@ -114,7 +114,8 @@ main (int argc, char **argv)
 	buf = (char *)(ptr + off);
 
 	prepare_key(passw, strlen(passw), &key);
-	rc4(buf, phdr->p_filesz - off, &key);
+	myrc4(buf, phdr->p_filesz - off, &key);
+	munmap(ptr, st.st_size);
 
 	return 0;
 }

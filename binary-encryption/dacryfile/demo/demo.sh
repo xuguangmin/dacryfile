@@ -25,6 +25,7 @@ rm -f a.c
 echo "Original:"
 ./host.orig
 
+
 #host.enc	The encrypted file.
 cp host.orig host.enc
 ../bin/encrypt host.enc
@@ -32,9 +33,11 @@ cp host.orig host.enc
 echo "Encrypted:"
 ./host.enc
 
+
 # host.dac	The encrypted infected file.
 cp host.enc host.dac
 ../bin/inject -f host.dac -p ../obj/para.o
+
 
 echo "Decrypting:"
 ./host.dac
