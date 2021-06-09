@@ -2,9 +2,6 @@
 #
 
 all:  
-	@if ! test -f "bin" ; then \
-		mkdir bin; \
-	fi 
 	@echo "Makeing required objects..."
 	@cd linux && make all
 
@@ -16,10 +13,11 @@ all:
 	@cd util && make all
 
 	@echo "Installing to bin..."
+	@cp util/inject util/encrypt bin 
 
 clean:
 	@cd linux && make clean
 	@cd util && make clean
 	@cd src && make clean
 	@cd obj && make clean
-	/bin/rm -rf  bin demo/host*
+	/bin/rm -rf  demo/host* bin/*

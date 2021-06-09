@@ -42,9 +42,9 @@ int dump_dynamic(Elf *elf);
 Elf_Scn * get_scnbyname(Elf *elf, char *name, int *num);
 
 struct reloc {
-	Elf32_Rel	* r_rel; // relocation array
+	Elf64_Rel	* r_rel; // relocation array
 	int		  r_cnt; // number of relocations
-	Elf32_Sym	* r_sym; // Symbol table
+	Elf64_Sym	* r_sym; // Symbol table
 	char		* r_buf; // buffer being modifed
 	Elf_Scn		* r_scn; // scn of the buffer being modifed
 	char		* r_strs;// string table 
@@ -83,8 +83,8 @@ new_reloc(Elf *elf)
 	if ((data = elf_getdata(scn, NULL)) == NULL)
 		return NULL;
 
-	ret->r_rel = (Elf32_Rel *)data->d_buf;
-	ret->r_cnt = data->d_size / sizeof(Elf32_Rel);
+	ret->r_rel = (Elf64_Rel *)data->d_buf;
+	ret->r_cnt = data->d_size / sizeof(Elf64_Rel);
 	/* finding relocations complete */
 
 	if ((scn = get_scnbyname(elf, ".text", NULL)) == NULL)
@@ -101,7 +101,7 @@ new_reloc(Elf *elf)
 	if ((data = elf_getdata(scn, NULL)) == NULL)
 		return NULL;
 
-	ret->r_sym = (Elf32_Sym *)data->d_buf;
+	ret->r_sym = (Elf64_Sym *)data->d_buf;
 	/* finding symbols complete */
 
 	if ((scn = get_scnbyname(elf, ".strtab", NULL)) == NULL)
@@ -119,8 +119,8 @@ int
 relocate_text(Elf *elf)
 {
 	Reloc		* rel;
-	Elf32_Rel	* r;
-	Elf32_Sym	* sym;
+	Elf64_Rel	* r;
+	Elf64_Sym	* sym;
 	int		  i;
 
 
@@ -207,13 +207,13 @@ insert_text(Elf *host, Elf *para)
 int
 update_entry(Elf *elf)
 {
-	Elf32_Ehdr	* ehdr;
-	Elf32_Phdr	* phdr;
+	Elf64_Ehdr	* ehdr;
+	Elf64_Phdr	* phdr;
 	int		  i;
 
-	if ((ehdr = elf32_getehdr(elf)) == NULL)
+	if ((ehdr = elf64_getehdr(elf)) == NULL)
 		return (-1);
-	if ((phdr = elf32_getphdr(elf)) == NULL)
+	if ((phdr = elf64_getphdr(elf)) == NULL)
 		return (-1);
 
 	for (i=0; i < ehdr->e_phnum; i++, phdr++)
@@ -233,14 +233,14 @@ update_entry(Elf *elf)
 int
 update_segments(Elf *elf)
 {
-	Elf32_Phdr	* phdr;
-	Elf32_Ehdr	* ehdr;
+	Elf64_Phdr	* phdr;
+	Elf64_Ehdr	* ehdr;
 	int		  i,
 			  f = 0;
 
-	if ((ehdr = elf32_getehdr(elf)) == NULL)
+	if ((ehdr = elf64_getehdr(elf)) == NULL)
 		return (-1);
-	if ((phdr = elf32_getphdr(elf)) == NULL)
+	if ((phdr = elf64_getphdr(elf)) == NULL)
 		return (-1);
 
 	for (i = 0; i < ehdr->e_phnum; i++, phdr++) {

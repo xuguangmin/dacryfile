@@ -94,11 +94,11 @@ __asm__ volatile ("int $0x80" \
 
 struct lib_desc
 {
-	Elf32_Word	* l_buckets;	/* addr of the hash table */
-	Elf32_Word	  l_nbuckets;	/* number of buckets in hash tab */
-	Elf32_Word	  l_nchain;	/* number of elements in chain */
-	Elf32_Word	* l_chain;	/* addr of the chain */
-	Elf32_Sym	* l_symtab;	/* ptr to symbol table */
+	Elf64_Word	* l_buckets;	/* addr of the hash table */
+	Elf64_Word	  l_nbuckets;	/* number of buckets in hash tab */
+	Elf64_Word	  l_nchain;	/* number of elements in chain */
+	Elf64_Word	* l_chain;	/* addr of the chain */
+	Elf64_Sym	* l_symtab;	/* ptr to symbol table */
 	char 		* l_strtab;	/* ptr to string table */
 	char		* l_load_addr;	/* load address of the library */
 	void		* l_handle;	/* handle from dlopen(), for dlcose() */

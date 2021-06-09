@@ -4,7 +4,6 @@ include $(TOP)/make.params
 
 all: inject encrypt
 	echo $(TOP)/bin
-	@cp inject encrypt $(TOP)/bin 
 
 inject: util.o inject.c
 	$(CC) -g $(CFLAGS) $(INCLUDE) -o inject inject.c util.o -lelf

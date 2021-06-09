@@ -106,8 +106,10 @@ main (int argc, char **argv)
 	phdr = (Elf32_Phdr *)(ptr + ehdr->e_phoff);
 
 	for (i = 0; i < ehdr->e_phnum; i++, phdr++)
+	{
 		if (phdr->p_type == PT_LOAD)
 			break;
+	}
 
 	off = ehdr->e_entry - phdr->p_vaddr;
 

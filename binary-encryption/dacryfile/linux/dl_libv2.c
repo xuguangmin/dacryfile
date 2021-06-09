@@ -171,9 +171,9 @@ lib_open(const char *lib_name, void *head, void *lib_handle)
 			* p,	/* walking pointer */
 			* q,	/* standing pointer */
 			* s;	/* store for strcmp() */
-	Elf32_Ehdr	* ehdr;
-	Elf32_Phdr	* phdr;
-	Elf32_Dyn	* dyn;
+	Elf64_Ehdr	* ehdr;
+	Elf64_Phdr	* phdr;
+	Elf64_Dyn	* dyn;
 	LibDesc		* libd;
 
 	/* enable pointer semantics */
@@ -285,8 +285,8 @@ lib_open(const char *lib_name, void *head, void *lib_handle)
 	 */
 	libd->l_load_addr = my_strtop(text_start, &p); 
 
-	ehdr =(Elf32_Ehdr *) libd->l_load_addr;
-	phdr =(Elf32_Phdr *)(libd->l_load_addr + ehdr->e_phoff);
+	ehdr =(Elf64_Ehdr *) libd->l_load_addr;
+	phdr =(Elf64_Phdr *)(libd->l_load_addr + ehdr->e_phoff);
 
 	while (phdr->p_type != PT_DYNAMIC)
 		phdr++;
@@ -296,7 +296,7 @@ lib_open(const char *lib_name, void *head, void *lib_handle)
 	/* The correct way to do this is to use p_offset and p_align to
 	 * calculate the location of the start of the .data and .dynamic
 	 * segments... but this way works quite nicely */
-	dyn  = (Elf32_Dyn *) (libd->l_load_addr + phdr->p_vaddr);
+	dyn  = (Elf64_Dyn *) (libd->l_load_addr + phdr->p_vaddr);
 
 	/* 
 	 * I can't understand why l_hash needs the load_addr added to it, 
@@ -472,7 +472,7 @@ dl_lib_open(char *lib_name, void *h)
 void *
 dl_lib_sym(char *sym_name, void *handler)
 {
-	Elf32_Sym	* sym,
+	Elf64_Sym	* sym,
 			* symtab;
 	int		  hn,
 			  ndx;
@@ -491,7 +491,7 @@ dl_lib_sym(char *sym_name, void *handler)
 	for (ndx = libd->l_buckets[hn]; ndx; ndx = libd->l_chain[ndx]) {
 		sym = symtab + ndx;
 
-		if ((ELF32_ST_TYPE(sym->st_info) == STT_FUNC) &&
+		if ((ELF64_ST_TYPE(sym->st_info) == STT_FUNC) &&
 			(!my_strncmp(strs + sym->st_name, sym_name,
 				     strlen(sym_name) - 1))) {
 			/* we found it! rejoice the king has cum. */

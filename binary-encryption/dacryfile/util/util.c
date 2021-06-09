@@ -71,13 +71,13 @@ char *elf_dyn[] = {
 int
 dump_dynamic(Elf *elf)
 {
-	Elf32_Dyn	* dyn;
-	Elf32_Phdr	* phdr;
-	Elf32_Ehdr	* ehdr;
+	Elf64_Dyn	* dyn;
+	Elf64_Phdr	* phdr;
+	Elf64_Ehdr	* ehdr;
 	char		* raw;
 	int		  i;
 
-	if ((phdr = elf32_getphdr(elf)) == NULL) {
+	if ((phdr = elf64_getphdr(elf)) == NULL) {
 		fprintf(stderr, "phdr == NULL");
 		return (2);
 	}
@@ -90,7 +90,7 @@ dump_dynamic(Elf *elf)
 	for (;phdr->p_type != PT_DYNAMIC; phdr++)
 		;
 
-	dyn = (Elf32_Dyn *)(raw + phdr->p_offset);
+	dyn = (Elf64_Dyn *)(raw + phdr->p_offset);
 
 	i = 0;
 	while (dyn->d_tag != DT_NULL) {
@@ -101,16 +101,16 @@ dump_dynamic(Elf *elf)
 		else if (dyn->d_tag >= DT_LOPROC &&
 				dyn->d_tag <= DT_LOPROC + DT_PROCNUM)
 			printf(" LOPROC ");
-		else if ((Elf32_Word)DT_VERSIONTAGIDX(dyn->d_tag) <
+		else if ((Elf64_Word)DT_VERSIONTAGIDX(dyn->d_tag) <
 				DT_VERSIONTAGNUM)
 			printf(" DT_VERSIONTAGNUM ");
-		else if ((Elf32_Word)DT_EXTRATAGIDX(dyn->d_tag) < 
+		else if ((Elf64_Word)DT_EXTRATAGIDX(dyn->d_tag) < 
 				DT_EXTRANUM)
 			printf(" DT_EXTRANUM ");
 		else
 			printf(" b0rken ");
 
-		printf("(%#x)\n", i * sizeof(Elf32_Dyn));
+		printf("(%#x)\n", i * sizeof(Elf64_Dyn));
 
 		dyn++;
 		i++;
@@ -122,9 +122,9 @@ dump_dynamic(Elf *elf)
 Elf_Scn *
 get_scnbyname(Elf *elf, char *name, int *num)
 {
-	Elf32_Ehdr	* ehdr;
+	Elf64_Ehdr	* ehdr;
 	Elf_Scn		* scn;
-	Elf32_Shdr	* shdr;
+	Elf64_Shdr	* shdr;
 	Elf_Data	* data;
 	int		  cnt,
 			  tmp;
@@ -134,7 +134,7 @@ get_scnbyname(Elf *elf, char *name, int *num)
 	
 	*num = 0;
 
-	if ((ehdr = elf32_getehdr(elf))==NULL)
+	if ((ehdr = elf64_getehdr(elf))==NULL)
 		return NULL;
 
 	if (((scn = elf_getscn(elf, ehdr->e_shstrndx)) == NULL) ||
@@ -142,7 +142,7 @@ get_scnbyname(Elf *elf, char *name, int *num)
 		return NULL;
 
 	for (cnt = 1, scn = NULL; (scn = elf_nextscn(elf, scn)); cnt++) {
-		if ((shdr = elf32_getshdr(scn)) == NULL)
+		if ((shdr = elf64_getshdr(scn)) == NULL)
 			return NULL;
 
 		if (! strcmp(name, (char *)data->d_buf + shdr->sh_name)) {
