@@ -16,4 +16,4 @@ util.o: util.c
 	$(CC) -g $(CFLAGS) $(INCLUDE) -c -o $@ $< 
 
 clean:
-	/bin/rm -f *.o *~
+	/bin/rm -f *.o inject  encrypt 
