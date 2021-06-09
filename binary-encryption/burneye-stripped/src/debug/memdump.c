@@ -11,6 +11,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <libgen.h>	/* basename */
+#include <sys/ptrace.h>
+#include <sys/user.h>
+
 
 
 void
@@ -27,7 +30,7 @@ main (int argc, char *argv[])
 				addr_end,	/* segment end address */
 				len;		/* length of segment */
 	unsigned long int	addr_walker,	/* walker to dump memory */
-				eip;		/* current childs eip */
+				rip;		/* current childs eip */
 
 	/* array to temporarily store data into */
 	unsigned char		data_saved[sizeof (unsigned long int)];
@@ -41,7 +44,7 @@ main (int argc, char *argv[])
 	char			dump_name[64];	/* filename buffer */
 
 
-	if (argc < 3 || sscanf (argv[1], "0x%lx", &eip) != 1) {
+	if (argc < 3 || sscanf (argv[1], "0x%lx", &rip) != 1) {
 		printf ("usage: %s <eip> <argv0 [argv1 [...]]>\n\n", argv[0]);
 		printf ("will run 'argv0' as program with given arguments, "
 				"until 'eip' is reached, then\n"
@@ -84,7 +87,7 @@ main (int argc, char *argv[])
 		perror ("ptrace PTRACE_GETREGS");
 		exit (EXIT_FAILURE);
 	}
-	fprintf (stderr, "[0x%08lx] first stop\n", regs.regs.eip);
+	fprintf (stderr, "[0x%08lx] first stop\n", regs.regs.rip);
 
 	/* now single step until given eip is reached */
 	do {
@@ -99,9 +102,9 @@ main (int argc, char *argv[])
 			perror ("ptrace PTRACE_GETREGS");
 			exit (EXIT_FAILURE);
 		}
-	} while (regs.regs.eip != eip);
+	} while (regs.regs.rip != rip);
 
-	fprintf (stderr, "MEMDUMP: eip @ 0x%08lx, dumping...\n", eip);
+	fprintf (stderr, "MEMDUMP: rip @ 0x%08lx, dumping...\n", rip);
 
 	snprintf (dump_name, sizeof (dump_name), "%s.regs",
 		basename (argv0));
@@ -111,19 +114,19 @@ main (int argc, char *argv[])
 		perror ("fopen dumpfile regs");
 		exit (EXIT_FAILURE);
 	}
-	fprintf (dump_f, "eax = 0x%08lx\n", regs.regs.eax);
-	fprintf (dump_f, "ebx = 0x%08lx\n", regs.regs.ebx);
-	fprintf (dump_f, "ecx = 0x%08lx\n", regs.regs.ecx);
-	fprintf (dump_f, "edx = 0x%08lx\n", regs.regs.edx);
-	fprintf (dump_f, "esi = 0x%08lx\n", regs.regs.esi);
-	fprintf (dump_f, "edi = 0x%08lx\n", regs.regs.edi);
-	fprintf (dump_f, "ebp = 0x%08lx\n", regs.regs.ebp);
-	fprintf (dump_f, "esp = 0x%08lx\n", regs.regs.esp);
+	fprintf (dump_f, "rax = 0x%08lx\n", regs.regs.rax);
+	fprintf (dump_f, "rbx = 0x%08lx\n", regs.regs.rbx);
+	fprintf (dump_f, "rcx = 0x%08lx\n", regs.regs.rcx);
+	fprintf (dump_f, "rdx = 0x%08lx\n", regs.regs.rdx);
+	fprintf (dump_f, "rsi = 0x%08lx\n", regs.regs.rsi);
+	fprintf (dump_f, "rdi = 0x%08lx\n", regs.regs.rdi);
+	fprintf (dump_f, "rbp = 0x%08lx\n", regs.regs.rbp);
+	fprintf (dump_f, "rsp = 0x%08lx\n", regs.regs.rsp);
 	fprintf (dump_f, "eflags = 0x%08lx\n", regs.regs.eflags);
-	fprintf (dump_f, "xcs = 0x%08lx\n", regs.regs.xcs);
-	fprintf (dump_f, "xds = 0x%08lx\n", regs.regs.xds);
-	fprintf (dump_f, "xes = 0x%08lx\n", regs.regs.xes);
-	fprintf (dump_f, "xss = 0x%08lx\n", regs.regs.xss);
+	fprintf (dump_f, "cs = 0x%08lx\n", regs.regs.cs);
+	fprintf (dump_f, "ds = 0x%08lx\n", regs.regs.ds);
+	fprintf (dump_f, "es = 0x%08lx\n", regs.regs.es);
+	fprintf (dump_f, "ss = 0x%08lx\n", regs.regs.ss);
 	fclose (dump_f);
 
 	snprintf (map_line, sizeof (map_line), "/proc/%d/maps", fpid);

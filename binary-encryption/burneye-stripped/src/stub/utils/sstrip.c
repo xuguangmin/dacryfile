@@ -9,7 +9,13 @@
 #include	<unistd.h>
 #include	<fcntl.h>
 #include	<elf.h>
-#include	<asm/elf.h>
+//#include	<asm/elf.h>
+//#include	<linux/elf.h>
+
+//usr/include/elf.h
+//usr/include/sys/elf.h
+//usr/include/linux/elf.h
+
 
 #ifndef TRUE
 #define	TRUE		1
@@ -67,14 +73,16 @@ static int readelfheader(int fd, Elf_Ehdr *ehdr)
 
     /* Compare the file's class and endianness with the program's.
      */
-    if (ehdr->e_ident[EI_DATA] != ELF_DATA)
+    //if (ehdr->e_ident[EI_DATA] != ELF_DATA)
+    if (ehdr->e_ident[EI_DATA] != ELFDATA2LSB)
 	return err("ELF file has different endianness.");
-    if (ehdr->e_ident[EI_CLASS] != ELF_CLASS)
+    //if (ehdr->e_ident[EI_CLASS] != ELF_CLASS)
+    if (ehdr->e_ident[EI_CLASS] != ELFCLASS64)
 	return err("ELF file has different word size.");
 
     /* Check the target architecture.
      */
-    if (ehdr->e_machine != ELF_ARCH)
+    if (ehdr->e_machine != EM_X86_64)
 	return err("ELF file created for different architecture.");
 
     /* Verify the sizes of the ELF header and the program segment
